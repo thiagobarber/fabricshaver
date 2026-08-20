@@ -1,81 +1,265 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification</title>
+    <title>Select Your Language</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, sans-serif; }
-        body, html { height: 100%; width: 100%; overflow: hidden; background: #0d1117; color: #fff; }
-        
-        .bg-container { position: absolute; top:0; left:0; width:100%; height:100%; z-index:1; filter: blur(8px) brightness(0.35); transform: scale(1.05); }
-        .bg-iframe { width:100%; height:100%; border:none; pointer-events:none; }
-        .overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(10, 15, 30, 0.75); z-index:2; }
-        .modal-wrapper { position: absolute; top:0; left:0; width:100%; height:100%; z-index:3; display:flex; align-items:center; justify-content:center; padding:20px; }
-        
-        /* CARD BASE */
-        .modal-card { width:100%; max-width:500px; background:#161b22; border:1px solid #30363d; border-radius:16px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.8); position:relative; padding:32px 28px; }
-        .close-btn { position:absolute; top:16px; right:20px; font-size:24px; font-weight:bold; color:#8b949e; text-decoration:none; line-height:1; }
-        .close-btn:hover { color:#fff; }
-        
-        .modal-title { font-size:22px; font-weight:700; color:#fff; line-height:1.3; margin-bottom:8px; }
-        .modal-subtitle { font-size:14px; color:#8b949e; line-height:1.5; margin-bottom:20px; }
-        .footer-text { text-align:center; font-size:12px; color:#8b949e; margin-top:16px; }
-        
-        .cta-btn { display:block; width:100%; background: #005fa8; color:#fff; text-align:center; padding:16px; font-size:15px; font-weight:700; text-decoration:none; border-radius:10px; text-transform:uppercase; box-shadow: 0 4px 14px #005fa866; transition: filter 0.2s; }
-        .cta-btn:hover { filter: brightness(1.15); }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-        /* LAYOUT 1: COUNTRY */
-        .layout-country .badge { display:inline-block; background: #005fa822; color: #005fa8; border:1px solid #005fa866; font-size:11px; font-weight:700; text-transform:uppercase; padding:4px 10px; border-radius:20px; margin-bottom:12px; }
-        .layout-country .country-option { background:#21262d; border:1px solid #30363d; border-radius:10px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; text-decoration:none; color:#fff; margin-bottom:12px; font-size:14px; font-weight:600; }
-        .layout-country .main-opt { border: 2px solid #005fa8; }
-        .layout-country .status-tag { font-size:11px; background: #005fa8; color:#fff; padding:3px 8px; border-radius:6px; font-weight:700; }
+        body, html {
+            height: 100%;
+            overflow: hidden;
+            background-color: #0f172a;
+        }
 
-        /* LAYOUT 2: AGE */
-        .layout-age { text-align: center; border-top: 4px solid #005fa8; }
-        .layout-age .warning-icon { font-size: 40px; margin-bottom: 10px; }
-        .layout-age .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .layout-age .btn-no { display:block; width:100%; background:#21262d; color:#8b949e; text-align:center; padding:16px; font-size:13px; font-weight:700; text-decoration:none; border-radius:10px; border:1px solid #30363d; }
+        /* Fundo Dinâmico com Efeito Blur */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            filter: blur(8px) brightness(0.6);
+            transform: scale(1.05); /* Evita bordas brancas pelo blur */
+        }
 
-        /* LAYOUT 3: COOKIES */
-        .layout-cookies { max-width: 550px; background: #0d1117; border: 1px solid #005fa888; }
-        .layout-cookies .cookies-header { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
-        .layout-cookies .shield-icon { font-size: 32px; background: #005fa822; padding: 10px; border-radius: 12px; }
+        .bg-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
+        }
 
-        /* LAYOUT 4: GÊNERO */
-        .layout-gender { text-align: center; }
-        .layout-gender .gender-grid { display: flex; gap: 12px; margin-bottom: 12px; }
-        .layout-gender .gender-card { flex: 1; text-decoration: none; }
-        .layout-gender .gender-btn { background: #21262d; border: 2px solid #30363d; padding: 20px 10px; border-radius: 12px; color: #fff; font-size: 14px; font-weight: 700; transition: all 0.2s; }
-        .layout-gender .gender-card:hover .gender-btn { border-color: #005fa8; background: #005fa811; }
+        /* Overlay Escuro */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-        /* SUPORTE PARA IDIOMAS RTL (ÁRABE) */
-        *[dir="rtl"] { direction: rtl; text-align: right; }
-        *[dir="rtl"] .close-btn { right: auto; left: 20px; }
-        *[dir="rtl"] .footer-text, *[dir="rtl"] .layout-age, *[dir="rtl"] .layout-gender { text-align: center; }
+        /* Estrutura do Modal */
+        .modal {
+            position: relative;
+            background: #ffffff;
+            width: 100%;
+            max-width: 440px;
+            border-radius: 16px;
+            padding: 32px 24px 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Botão Fechar (X) */
+        .btn-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 32px;
+            height: 32px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-close:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        /* Tipografia */
+        .modal-icon {
+            font-size: 38px;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        p {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        /* Botões de Seleção */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        /* Destaque para o Inglês (Principal) */
+        .btn-primary {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            border: 2px solid #2563eb;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            border-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        /* Opções Secundárias */
+        .btn-secondary {
+            background: #f8fafc;
+            color: #1e293b;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .flag-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .flag {
+            font-size: 20px;
+        }
+
+        .badge-recommended {
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .arrow {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* Rodapé de Segurança */
+        .modal-footer {
+            margin-top: 18px;
+            font-size: 12px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
     </style>
 </head>
 <body>
-    <div class="bg-container"><iframe class="bg-iframe" src="https://www.clickrtrckr.com/HJ1796W/92G12P3/"></iframe></div>
-    <div class="overlay"></div>
-    <div class="modal-wrapper">
-        
-                <div class="modal-card layout-country" >
-                    <a href="https://www.clickrtrckr.com/HJ1796W/92G12P3/" class="close-btn">&times;</a>
-                    <span class="badge">Region Verification</span>
-                    <h1 class="modal-title">Select Your Location</h1>
-                    <p class="modal-subtitle">To ensure stock availability and fast local shipping, please confirm your region.</p>
-                    <a href="https://www.clickrtrckr.com/HJ1796W/92G12P3/" class="country-option main-opt">
-                        <span>🇺🇸 North America (United States)</span>
-                        <span class="status-tag">In Stock</span>
-                    </a>
-                    <a href="https://www.clickrtrckr.com/HJ1796W/92G12P3/" class="country-option sec-opt">
-                        <span>🌐 Other Continents / International</span>
-                    </a>
-                    <a href="https://www.clickrtrckr.com/HJ1796W/92G12P3/" class="cta-btn">Continue to Official Site »</a>
-                    <div class="footer-text">✓ Official Supply Chain • Fast Shipping</div>
-                </div>
+
+    <!-- Fundo Carregando a Página de Destino Desfocada -->
+    <div class="bg-container">
+        <iframe src="https://www.clickrtrckr.com/HJ1796W/92G12P3/" tabindex="-1" aria-hidden="true"></iframe>
     </div>
+
+    <!-- Overlay & Modal -->
+    <div class="overlay" id="overlay">
+        <div class="modal">
+            <!-- Botão de Fechar Direcionando ao Link -->
+            <a href="https://www.clickrtrckr.com/HJ1796W/92G12P3/" class="btn-close" title="Close">✕</a>
+
+            <div class="modal-icon">🌐</div>
+            <h2>Select Your Language</h2>
+            <p>Please choose your preferred language to continue</p>
+
+            <div class="btn-group">
+                <!-- Opção 1: Inglês (Destaque Principal) -->
+                <a href="https://www.clickrtrckr.com/HJ1796W/92G12P3/" class="btn-option btn-primary">
+                    <div class="flag-text">
+                        <span class="flag">🇺🇸</span>
+                        <span>English</span>
+                    </div>
+                    <span class="badge-recommended">Default</span>
+                </a>
+
+                <!-- Opção 2: Espanhol -->
+                <a href="https://www.clickrtrckr.com/HJ1796W/92G12P3/" class="btn-option btn-secondary">
+                    <div class="flag-text">
+                        <span class="flag">🇪🇸</span>
+                        <span>Español</span>
+                    </div>
+                    <span class="arrow">➔</span>
+                </a>
+
+                <!-- Opção 3: Outros -->
+                <a href="https://www.clickrtrckr.com/HJ1796W/92G12P3/" class="btn-option btn-secondary">
+                    <div class="flag-text">
+                        <span class="flag">🌍</span>
+                        <span>Other / Other Languages</span>
+                    </div>
+                    <span class="arrow">➔</span>
+                </a>
+            </div>
+
+            <div class="modal-footer">
+                <span>🔒 Secure Connection & Fast Redirection</span>
+            </div>
+        </div>
+    </div>
+
   <script defer src="https://presellfuga.lovable.app/tracker.js?site=6dfa8a6b-050f-41ae-822a-f879846a55d4"></script>
 </body>
 </html>
